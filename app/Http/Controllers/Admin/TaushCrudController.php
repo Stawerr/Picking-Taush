@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\TaushRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\TaushesImport;
 
 /**
  * Class TaushCrudController
@@ -41,6 +43,8 @@ class TaushCrudController extends CrudController
     {
         CRUD::addColumn(['name' => 'name', 'type' => 'string', 'label' => 'Nome']);
         CRUD::addColumn(['name' => 'reference', 'type' => 'string', 'label' => 'Referência']);
+
+        CRUD::addButtonFromView('top', 'import-csv-taushes', 'import-csv-taushes', 'end');
     }
 
     /**
@@ -70,5 +74,17 @@ class TaushCrudController extends CrudController
     {
         CRUD::addColumn(['name' => 'name', 'type' => 'string', 'label' => 'Nome']);
         CRUD::addColumn(['name' => 'reference', 'type' => 'string', 'label' => 'Referência']);
+    }
+
+    public function import(TaushRequest $request) 
+    {
+        if($request->file){
+            Excel::import(new TaushesImport, $request->file);
+            
+            return redirect('admin/taush')->with('success', 'Ficheiro importado com sucesso!');
+        }
+        else{
+            return redirect('admin/taush')->with('success', 'Ficheiro inexistente!');
+        }
     }
 }

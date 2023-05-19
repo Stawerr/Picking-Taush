@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\PickingCrudController;
+use App\Http\Controllers\Admin\TaushCrudController;
 
 // --------------------------
 // Custom Backpack Routes
@@ -18,5 +20,7 @@ Route::group([
 ], function () { // custom admin routes
     Route::crud('user', 'UserCrudController');
     Route::crud('picking', 'PickingCrudController');
+    Route::post('picking/import-pickings', [PickingCrudController::class, 'import'])->name('picking.import');
     Route::crud('taush', 'TaushCrudController');
+    Route::post('taush/import-taushes', [TaushCrudController::class, 'import'])->name('taush.import');
 }); // this should be the absolute last line of this file

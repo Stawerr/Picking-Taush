@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\PickingRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\PickingsImport;
 
 /**
  * Class PickingCrudController
@@ -42,6 +44,8 @@ class PickingCrudController extends CrudController
         CRUD::addColumn(['name' => 'name', 'type' => 'string', 'label' => 'Nome']);
         CRUD::addColumn(['name' => 'reference', 'type' => 'string', 'label' => 'Referência']);
         CRUD::addColumn(['name' => 'qty', 'type' => 'number', 'label' => 'Quantidade']);
+
+        CRUD::addButtonFromView('top', 'import-csv-pickings', 'import-csv-pickings', 'end');
     }
 
     /**
@@ -73,5 +77,17 @@ class PickingCrudController extends CrudController
         CRUD::addColumn(['name' => 'name', 'type' => 'string', 'label' => 'Nome']);
         CRUD::addColumn(['name' => 'reference', 'type' => 'string', 'label' => 'Referência']);
         CRUD::addColumn(['name' => 'qty', 'type' => 'number', 'label' => 'Quantidade']);
+    }
+
+    public function import(PickingRequest $request) 
+    {
+        if($request->file){
+            Excel::import(new PickingsImport, $request->file);
+            
+            return redirect('admin/picking')->with('success', 'Ficheiro importado com sucesso!');
+        }
+        else{
+            return redirect('admin/picking')->with('success', 'Ficheiro inexistente!');
+        }
     }
 }
