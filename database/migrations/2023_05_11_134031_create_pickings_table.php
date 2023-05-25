@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('pickings', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('reference');
-            $table->integer('qty');
+            $table->string('reference')->unique();
+            $table->string('department');
+            $table->boolean('digitalized')->default(false);
+            $table->string('scan_date')->nullable();
+            $table->string('last_scan_date')->nullable();
             $table->timestamps();
         });
     }

@@ -41,9 +41,12 @@ class TaushCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::addColumn(['name' => 'name', 'type' => 'string', 'label' => 'Nome']);
+        CRUD::addColumn(['name' => 'id', 'type' => 'int', 'label' => 'id']);
         CRUD::addColumn(['name' => 'reference', 'type' => 'string', 'label' => 'Referência']);
-
+        CRUD::addColumn(['name' => 'department', 'type' => 'string', 'label' => 'Departamento']);
+        CRUD::addColumn(['name' => 'digitalized', 'type' => 'boolean', 'label' => 'Digitalizado']);
+        CRUD::addColumn(['name' => 'scan_date', 'type' => 'date', 'label' => 'Data de scan']);
+        CRUD::addColumn(['name' =>'last_scan_date', 'type' => 'date', 'label' => 'Última data de scan']);
         CRUD::addButtonFromView('top', 'import-csv-taushes', 'import-csv-taushes', 'end');
     }
 
@@ -55,8 +58,8 @@ class TaushCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-        CRUD::addField(['name' => 'name', 'type' => 'text', 'label' => 'Nome']);
         CRUD::addField(['name' => 'reference', 'type' => 'text', 'label' => 'Referência']);
+        CRUD::addField(['name' => 'department', 'type' => 'text', 'label' => 'Departamento']);
     }
 
     /**
@@ -72,8 +75,11 @@ class TaushCrudController extends CrudController
 
     protected function setupShowOperation()
     {
-        CRUD::addColumn(['name' => 'name', 'type' => 'string', 'label' => 'Nome']);
         CRUD::addColumn(['name' => 'reference', 'type' => 'string', 'label' => 'Referência']);
+        CRUD::addColumn(['name' => 'department', 'type' => 'string', 'label' => 'Departamento']);
+        CRUD::addColumn(['name' => 'digitalized', 'type' => 'boolean', 'label' => 'Digitalizado']);
+        CRUD::addColumn(['name' => 'scan_date', 'type' => 'date', 'label' => 'Data de scan']);
+        CRUD::addColumn(['name' =>'last_scan_date', 'type' => 'date', 'label' => 'Última data de scan']);
     }
 
     public function import(TaushRequest $request) 

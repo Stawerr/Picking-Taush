@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('histories', function (Blueprint $table) {
             $table->id();
+            $table->enum('log_type', ['success', 'error']);
             $table->string('reference');
             $table->foreignId('picking_id')->nullable()->constrained();
-            $table->foreignId('taushes_id')->nullable()->constrained();
+            $table->foreignId('taush_id')->nullable()->constrained();
             $table->dateTime('scan_date_time');
+            $table->string('log_message');
             $table->timestamps();
         });
     }

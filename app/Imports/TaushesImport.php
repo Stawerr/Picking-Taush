@@ -1,8 +1,11 @@
 <?php
 
+
 namespace App\Imports;
 
 use App\Models\Taush;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
@@ -16,8 +19,8 @@ class TaushesImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
         return new Taush([
-            'name'     => $row['Nome'],
-            'reference'    => $row['Referencia'], 
+            "reference" => $row['referencia'],
+            "department" => $row['departamento'],
         ]);
     }
 }

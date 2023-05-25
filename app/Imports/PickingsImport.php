@@ -1,11 +1,15 @@
 <?php
 
+
 namespace App\Imports;
 
 use App\Models\Picking;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class PickingsImport implements ToModel
+class PickingsImport implements ToModel, WithHeadingRow
 {
     /**
     * @param array $row
@@ -15,9 +19,9 @@ class PickingsImport implements ToModel
     public function model(array $row)
     {
         return new Picking([
-            'name'     => $row[0],
-            'reference'    => $row[1], 
-            'qty' => $row[2],
+            "reference" => $row['referencia'],
+            "department" => $row['departamento'],
         ]);
     }
 }
+

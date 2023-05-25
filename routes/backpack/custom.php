@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\PickingCrudController;
 use App\Http\Controllers\Admin\TaushCrudController;
-
+use App\Http\Controllers\Admin\HistoryCrudController;
 // --------------------------
 // Custom Backpack Routes
 // --------------------------
@@ -23,4 +23,8 @@ Route::group([
     Route::post('picking/import-pickings', [PickingCrudController::class, 'import'])->name('picking.import');
     Route::crud('taush', 'TaushCrudController');
     Route::post('taush/import-taushes', [TaushCrudController::class, 'import'])->name('taush.import');
+    Route::crud('history', 'HistoryCrudController');
+    Route::post('history/createHistory', [HistoryCrudController::class, 'createHistory'])->name('history.create');
+    Route::post('history/exportHistory', [HistoryCrudController::class, 'exportHistory'])->name('history.export');
+
 }); // this should be the absolute last line of this file

@@ -44,13 +44,14 @@ class HistoryCrudController extends CrudController
      */
     protected function setupListOperation()
     { 
-        CRUD::addColumn(['name' => 'reference', 'type' => 'string', 'label' => 'Reference']);
+        CRUD::addColumn(['name' => 'log_type', 'type' => 'enum', 'label' => 'Tipo de log']);
+        CRUD::addColumn(['name' => 'reference', 'type' => 'string', 'label' => 'Referencia']);
         CRUD::addColumn(['name' => 'picking_id', 'type' => 'foreignId', 'label' => 'PickingId']);
-        CRUD::addColumn(['name' => 'taushes_id', 'type' => 'foreignId', 'label' => 'TaushesId']);
-        CRUD::addColumn(['name' => 'scan_date_time', 'type' => 'dateTime', 'label' => 'ScanDateTime']);
+        CRUD::addColumn(['name' => 'taush_id', 'type' => 'foreignId', 'label' => 'TaushId']);
+        CRUD::addColumn(['name' => 'scan_date_time', 'type' => 'dateTime', 'label' => 'Data de scan']);
+        CRUD::addColumn(['name' => 'log_message', 'type' => 'string', 'label' => 'Mensagem de log']);
         CRUD::addButtonFromView('top', 'moderate', 'create-history','create-history', 'end');
         CRUD::addButtonFromView('top', 'export-history','export-history', 'end');
-
         /**
          * Columns can be defined using the fluent syntax or array syntax:
          * - CRUD::column('price')->type('number');
@@ -93,19 +94,21 @@ class HistoryCrudController extends CrudController
         $pickings= Picking::all();
         $taushs= Taush::all();
         $historys = History::all();
-        $pickingExist =0;
-        $taushExist =0;
         $pickingMessage = 'Referencia '.$request->reference.' não encontrada em picking';
         $taushMessage = 'Referencia '.$request->reference.' não é peça taush';
         $digitalizedMessage= '';
+        $history= new History();
+        $history->log_type = 'error';
+        $history->log_message= $pickingMessage;
+        $history->reference = $request->reference;
+        $history->scan_date_time=Carbon::now()->addhours(1)->ToDateTimeString();
         //Verificar se existe na picking
         foreach($pickings as $picking) {
             if($request->reference == $picking->reference) {
                 $pickingMessage = 'Referencia ' .$request->reference.' encontrada em picking';
-                $history= new History();
-                $history->reference=$picking->reference;
+                $history->log_message= $pickingMessage;
+                $history->log_type = 'success';
                 $history->picking_id = $picking->id;
-                $history->scan_date_time=Carbon::now()->addhours(1)->ToDateTimeString();
                 //Verificar se já foi digitalizada
                 if($picking->digitalized == 0){
                     $picking->digitalized=1;
@@ -113,22 +116,27 @@ class HistoryCrudController extends CrudController
                     $picking->last_scan_date= Carbon::now()->ToDateString();
                 }else{
                     $digitalizedMessage='Referencia'.$request->reference.' já foi digitalizada';
+                    $history->log_message= $digitalizedMessage;
                     $picking->last_scan_date= Carbon::now()->ToDateString();
                 }
-                $picking->save();
-                $history->save();
-                
+                $picking->save();                
                 break;
             }
         }
+        $history->save();
+
+        $history= new History();
+        $history->log_type = 'error';
+        $history->log_message= $taushMessage;
+        $history->reference = $request->reference;
+        $history->scan_date_time=Carbon::now()->addhours(1)->ToDateTimeString();
         //Verificar se existe na taush
         foreach($taushs as $taush) {
             if($request->reference == $taush->reference) {
                 $taushMessage = 'Referencia '.$request->reference. ' é peça taush';
-                $history= new History();
-                $history->reference=$taush->reference;
-                $history->taushes_id=$taush->id;
-                $history->scan_date_time= Carbon::now()->addhours(1)->ToDateTimeString();
+                $history->log_message= $taushMessage;
+                $history->log_type = 'success';
+                $history->taush_id=$taush->id;
                 //Verificar se já foi digitalizada
                 if($taush->digitalized == 0){
                     $taush->digitalized=1;
@@ -136,14 +144,15 @@ class HistoryCrudController extends CrudController
                     $taush->last_scan_date= Carbon::now()->ToDateString();
                 }else{
                     $digitalizedMessage='Referencia'.$request->reference.' já foi digitalizada';
+                    $history->log_message= $digitalizedMessage;
                     $taush->last_scan_date= Carbon::now()->ToDateString();
                 }
                 $taush->save();
-                $history->save();
                 break;
             }
         }
-        
+        $history->save();
+
         return redirect()->back()->with('taushMessage',$taushMessage)->with('pickingMessage',$pickingMessage)->with('digitalizedMessage',$digitalizedMessage);
     }
     public function exportHistory(){
